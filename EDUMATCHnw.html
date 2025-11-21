@@ -1,0 +1,479 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Tes Gaya Belajar</title>
+
+  <!-- Google Fonts (elegant) -->
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;600;700&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+
+  <!-- Lottie web component -->
+  <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+
+  <style>
+    :root{
+      --navy:#0b2545;
+      --blue:#2b6fb6;
+      --soft:#e9f2ff;
+      --card:#ffffff;
+      --glass: rgba(255,255,255,0.06);
+      --radius:18px;
+      --shadow: 0 6px 22px rgba(11,37,69,0.12);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:'IBM Plex Sans',system-ui,Segoe UI,Roboto,'Helvetica Neue',Arial; background: linear-gradient(180deg,var(--soft),#f6fbff); color:var(--navy);}
+
+    /* Layout */
+    .app{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:28px}
+    .card{width:100%;max-width:920px;background:linear-gradient(180deg, rgba(255,255,255,0.9), rgba(250,255,255,0.95));border-radius:20px;box-shadow:var(--shadow);overflow:hidden;display:grid;grid-template-columns:380px 1fr}
+
+    /* Left column (visuals & decoration) */
+    .panel{background:linear-gradient(135deg,var(--navy),var(--blue));color:white;padding:28px;display:flex;flex-direction:column;gap:18px;align-items:flex-start}
+    .brand{font-family:'Playfair Display', serif;font-size:26px}
+    .subtitle{opacity:0.95}
+    .lottie-wrap{width:100%;display:flex;gap:12px;flex-wrap:wrap}
+    lottie-player{width:100%;border-radius:14px;background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));padding:8px}
+
+    /* Right column content */
+    .content{padding:28px}
+    .stepper{display:flex;gap:8px;align-items:center;margin-bottom:14px}
+    .step{padding:8px 12px;border-radius:12px;background:var(--soft);color:var(--navy);font-weight:600}
+
+    h1{margin:6px 0 2px;font-size:22px}
+    p.lead{margin:0 0 14px;color:#08305a}
+
+    .form-row{display:flex;gap:8px;margin-bottom:12px}
+    input,select,textarea{width:100%;padding:12px;border-radius:12px;border:1px solid rgba(11,37,69,0.08);outline:none;font-size:14px}
+
+    /* Question card */
+    .question-card{background:var(--card);border-radius:14px;padding:18px;box-shadow:0 6px 18px rgba(11,37,69,0.06);transition:transform .35s ease,opacity .35s ease}
+    .question-number{font-weight:700;color:var(--navy)}
+    .question-text{margin:8px 0 16px;font-size:18px}
+    .options{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+    .option{padding:12px;border-radius:12px;border:1px solid rgba(11,37,69,0.06);display:flex;gap:10px;align-items:center;cursor:pointer;transition:transform .12s ease,box-shadow .12s ease}
+    .option:hover{transform:translateY(-4px);box-shadow:0 10px 22px rgba(11,37,69,0.06)}
+    .option.active{background:linear-gradient(90deg,var(--navy),var(--blue));color:white;border:0}
+    .option .emoji{font-size:22px}
+    .option .meta{font-size:13px;opacity:0.9}
+
+    .controls{display:flex;justify-content:space-between;gap:10px;margin-top:16px}
+    .btn{padding:10px 16px;border-radius:12px;border:0;background:var(--navy);color:white;font-weight:700;cursor:pointer}
+    .btn.ghost{background:transparent;color:var(--navy);border:1px solid rgba(11,37,69,0.08)}
+    .progress{height:8px;background:rgba(11,37,69,0.06);border-radius:8px;overflow:hidden}
+    .progress > b{display:block;height:100%;background:linear-gradient(90deg,var(--blue),var(--navy));width:0%}
+
+    /* Result */
+    .result{display:flex;gap:18px;align-items:center}
+    .result .big{font-size:22px;font-weight:700}
+    .tips{margin-top:12px}
+    .tips li{margin-bottom:8px}
+
+    /* Responsive */
+    @media (max-width:900px){
+      .card{grid-template-columns:1fr;}
+      .panel{order:2}
+      .content{order:1}
+      .lottie-wrap lottie-player{height:140px}
+      .options{grid-template-columns:1fr}
+    }
+
+    /* Background tiny floating shapes */
+    .bg-shapes{position:fixed;left:12px;top:12px;pointer-events:none;opacity:0.12}
+    .floating{animation:floaty 6s ease-in-out infinite}
+    @keyframes floaty{0%{transform:translateY(0)}50%{transform:translateY(-10px)}100%{transform:translateY(0)}}
+
+    /* small animations */
+    .fadein{animation:fade .45s ease both}
+    @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  </style>
+</head>
+<body>
+
+<div class="bg-shapes">
+  <lottie-player class="floating" src="https://assets2.lottiefiles.com/datafiles/6p6pZ3r0a6aYb1Y/data.json"  background="transparent"  speed="0.8"  style="width:120px;height:120px;"  loop  autoplay></lottie-player>
+</div>
+
+<div class="app">
+  <div class="card">
+    <div class="panel">
+      <div class="brand">Tes Gaya Belajar</div>
+      <div class="subtitle">Temukan Cara Belajarmu Yang Paling Efektif</div>
+      <p style="opacity:0.95">Pelajari gaya Visual, Auditori, atau Kinestetik — dan dapatkan tips praktis agar belajarmu lebih efektif.</p>
+
+      <div class="lottie-wrap">
+        <!-- illustrative Lottie animations (placeholders) -->
+        <lottie-player src="https://assets9.lottiefiles.com/private_files/lf30_editor_qx4v3nct.json"  background="transparent"  speed="1"  style="width:160px;height:160px;"  loop  autoplay></lottie-player>
+        <lottie-player src="https://assets4.lottiefiles.com/packages/lf20_vf6q7kzo.json"  background="transparent"  speed="0.9"  style="width:160px;height:160px;"  loop  autoplay></lottie-player>
+      </div>
+
+      <div style="margin-top:auto;opacity:0.95;font-size:13px"></div>
+    </div>
+
+    <div class="content">
+      <div id="app-root">
+        <!-- Stepper header -->
+        <div class="stepper"><div class="step" id="stepLabel">Login</div><div style="flex:1"></div><div id="progressText">0 / 16</div></div>
+
+        <!-- Pages container -->
+        <div id="pages">
+          <!-- PAGE 1: Login -->
+          $1
+            <div class="question-card fadein">
+              <h1>Login / Daftar Diri</h1>
+              <p class="lead">Isi nama, kelas, dan nama sekolahmu. Data hanya untuk menampilkan hasil.</p>
+
+              <div style="display:flex;gap:12px;align-items:center;margin-bottom:12px;flex-wrap:wrap">
+                <div style="flex:1;min-width:160px">
+                  <input id="name" placeholder="Nama lengkap" required />
+                </div>
+                <div style="min-width:140px">
+                  <input id="kelas" placeholder="Kelas (contoh: 10 IPA 1)" />
+                </div>
+                <div style="min-width:180px">
+                  <input id="sekolah" placeholder="Nama sekolah" />
+                </div>
+              </div>
+
+              <!-- Teacher animation specifically for halaman pertama -->
+              <div style="display:flex;justify-content:center;margin:10px 0">
+                <lottie-player src="https://assets6.lottiefiles.com/packages/lf20_5ngs2ksb.json"  background="transparent"  speed="1"  style="width:220px;height:220px;"  loop  autoplay></lottie-player>
+              </div>
+
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px">
+                <div style="width:75%">
+                  <div style="font-size:13px;color:#08305a;margin-bottom:6px"><strong>Petunjuk singkat</strong></div>
+                  <ul style="margin:0;padding-left:18px;color:#08406a;font-size:13px">
+                    <li>Jawab dengan jujur untuk mendapatkan hasil terbaik.</li>
+                    <li>Setiap soal harus dipilih (tidak bisa lanjut jika kosong).</li>
+                  </ul>
+                </div>
+                <div>
+                  <button class="btn" onclick="nextPage()">Mulai Tes</button>
+                </div>
+              </div>
+            </div>
+          $2
+
+          <!-- PAGE 2: Instructions -->
+          <section class="page" data-step="2" style="display:none">
+            <div class="question-card fadein">
+              <h1>Petunjuk Penggunaan</h1>
+              <p class="lead">Baca petunjuk berikut sebelum mulai mengerjakan.</p>
+              <ol>
+                <li>Kerjakan dengan jujur. Setiap jawaban A sampai E memiliki bobot 1–5.</li>
+                <li>Pilih jawaban yang paling sesuai denganmu. Tidak boleh kosong.</li>
+                <li>Setiap pertanyaan tampil 1 per halaman. Gunakan tombol Next/Back.</li>
+                <li>Hasil akan menunjukkan gaya belajarmu dan tips yang sesuai.</li>
+              </ol>
+
+              <div style="display:flex;justify-content:flex-end;margin-top:12px">
+                <button class="btn ghost" onclick="prevPage()">Kembali</button>
+                <button class="btn" onclick="nextPage()">Mulai Pertanyaan</button>
+              </div>
+            </div>
+          </section>
+
+          <!-- Pages 3..17 : Questions 1 - 15 -->
+          <!-- We'll generate them via JS. Placeholder container -->
+
+          <!-- PAGE RESULT -->
+          <section class="page" data-step="18" style="display:none">
+            <div class="question-card fadein">
+              <div id="resultBlock">
+                <h1>Hasil Tes</h1>
+                <div id="userSummary" style="margin-bottom:8px;color:#08305a;font-weight:600"></div>
+                <div class="result">
+                  <div style="flex:1">
+                    <div class="big" id="dominantStyle">-</div>
+                    <p id="styleDesc" style="margin-top:6px"></p>
+
+                    <ul class="tips" id="styleTips"></ul>
+                  </div>
+                  <div style="width:140px;text-align:center">
+                    <lottie-player id="resultAnim" src="https://assets2.lottiefiles.com/packages/lf20_jbrw3hcz.json"  background="transparent"  speed="1"  style="width:140px;height:140px;"  loop  autoplay></lottie-player>
+                  </div>
+                </div>
+
+                <div style="margin-top:12px;background:linear-gradient(90deg,var(--soft),#fff);padding:12px;border-radius:12px">
+                  <strong>Kata-kata motivasi</strong>
+                  <p id="motivation" style="margin:6px 0 0"></p>
+                </div>
+
+                <div style="display:flex;gap:10px;margin-top:12px">
+                  <button class="btn" onclick="restart()">Ulang Tes</button>
+                  <button class="btn ghost" onclick="downloadResult()">Simpan Hasil (PNG)</button>
+                </div>
+              </div>
+            </div>
+          </section>
+
+        </div>
+
+        <!-- bottom progress bar -->
+        <div style="margin-top:14px">
+          <div class="progress"><b id="progBar"></b></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Questions array from user's content (Visual 1-5, Auditory 6-10, Kinestetik 11-15)
+const questions = [
+  {id:1, text:"Saya lebih mudah memahami pelajaran jika melihat gambar, diagram, atau video.",group:'Visual'},
+  {id:2, text:"Saya suka membuat catatan berwarna atau mind map agar lebih mudah mengingat.",group:'Visual'},
+  {id:3, text:"Saat mendengarkan penjelasan, saya membayangkan bentuk atau gambarnya dalam pikiran saya.",group:'Visual'},
+  {id:4, text:"Saya lebih cepat mengingat wajah seseorang dibanding nama atau suaranya.",group:'Visual'},
+  {id:5, text:"Saya suka belajar dari buku atau slide yang tampilannya menarik.",group:'Visual'},
+
+  {id:6, text:"Saya lebih cepat paham jika guru atau teman menjelaskan secara langsung.",group:'Auditori'},
+  {id:7, text:"Saya suka berdiskusi atau mengulang pelajaran dengan cara mengucapkannya keras-keras.",group:'Auditori'},
+  {id:8, text:"Saya mudah mengingat hal yang saya dengar daripada yang saya lihat.",group:'Auditori'},
+  {id:9, text:"Saya lebih senang mendengarkan penjelasan daripada membaca sendiri.",group:'Auditori'},
+  {id:10, text:"Saya sering menggunakan musik atau irama untuk membantu mengingat sesuatu.",group:'Auditori'},
+
+  {id:11, text:"Saya lebih mudah memahami sesuatu jika langsung mempraktikkannya.",group:'Kinestetik'},
+  {id:12, text:"Saya suka belajar sambil bergerak, misalnya berjalan atau memegang sesuatu.",group:'Kinestetik'},
+  {id:13, text:"Saya cepat bosan jika harus duduk diam terlalu lama saat belajar.",group:'Kinestetik'},
+  {id:14, text:"Saya suka pelajaran yang ada praktik, percobaan, atau kegiatan langsungnya.",group:'Kinestetik'},
+  {id:15, text:"Saya lebih mengingat hal yang pernah saya lakukan sendiri.",group:'Kinestetik'},
+];
+
+// Mapping choices: A=1 .. E=5 (A: Sangat Tidak Sesuai -> E: Sangat Sesuai)
+const choices = [
+  {key:'A',label:'Sangat Tidak Sesuai',value:1,emoji:'😖'},
+  {key:'B',label:'Tidak Sesuai',value:2,emoji:'🙁'},
+  {key:'C',label:'Netral',value:3,emoji:'😐'},
+  {key:'D',label:'Sesuai',value:4,emoji:'🙂'},
+  {key:'E',label:'Sangat Sesuai',value:5,emoji:'🤩'},
+];
+
+// State
+let pageIndex = 1; // 1: login, 2: instr, 3..17 q1..q15, 18 result
+const totalSteps = 18; // 1..18
+const answers = new Array(15).fill(null);
+
+// Create question pages dynamically
+function makeQuestionPages(){
+  const pagesContainer = document.getElementById('pages');
+  const insertBefore = Array.from(pagesContainer.querySelectorAll('section.page[data-step]')).find(s=>s.dataset.step==18);
+  questions.forEach((q,i)=>{
+    const stepNum = 3 + i; // page 3..17
+    const sec = document.createElement('section');
+    sec.className = 'page';
+    sec.dataset.step = stepNum;
+    sec.style.display = 'none';
+
+    sec.innerHTML = `
+      <div class="question-card fadein">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <div class="question-number">Pertanyaan ${q.id} dari 15</div>
+            <div class="question-text">${q.text}</div>
+          </div>
+          <div style="width:120px;text-align:center">
+            <lottie-player src="https://assets7.lottiefiles.com/packages/lf20_9g0h92.json"  background="transparent"  speed="1"  style="width:110px;height:110px;"  loop  autoplay></lottie-player>
+          </div>
+        </div>
+
+        <div style="margin-top:8px;font-size:13px;color:#08305a">Pilih jawaban yang paling sesuai denganmu:</div>
+        <div class="options" style="margin-top:10px" id="opts-${i}"></div>
+
+        <div class="controls">
+          <div>
+            <button class="btn ghost" onclick="prevPage()">Back</button>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <div style="font-size:13px;color:#08305a">Kategori: <strong>${q.group}</strong></div>
+            <button class="btn" onclick="nextPage()">Next</button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    pagesContainer.insertBefore(sec, insertBefore);
+
+    // populate options
+    const optsCtn = sec.querySelector(`#opts-${i}`);
+    choices.forEach(ch=>{
+      const btn = document.createElement('div');
+      btn.className = 'option';
+      btn.innerHTML = `<div style="width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,rgba(11,37,69,0.04),rgba(11,37,69,0.02))"><div class="emoji">${ch.emoji}</div></div>
+        <div>
+          <div style="font-weight:700">${ch.key}. ${ch.label}</div>
+          <div class="meta">Nilai: ${ch.value}</div>
+        </div>`;
+
+      btn.onclick = ()=>{
+        // set active
+        Array.from(optsCtn.children).forEach(x=>x.classList.remove('active'));
+        btn.classList.add('active');
+        answers[i] = ch.value;
+      };
+
+      optsCtn.appendChild(btn);
+    });
+  });
+}
+
+makeQuestionPages();
+
+// Navigation
+function showStep(step){
+  // validation: show only
+  document.querySelectorAll('.page').forEach(s=>{
+    s.style.display = (Number(s.dataset.step)===step)?'block':'none';
+  });
+  pageIndex = step;
+  updateHeader();
+}
+
+function updateHeader(){
+  const stepLabel = document.getElementById('stepLabel');
+  const progressText = document.getElementById('progressText');
+  const progBar = document.getElementById('progBar');
+
+  const labels = {
+    1:'Login',2:'Petunjuk'
+  };
+  let label = labels[pageIndex] || (pageIndex>=3 && pageIndex<=17? `Pertanyaan ${pageIndex-2}`: (pageIndex===18? 'Hasil':'')); 
+  stepLabel.textContent = label;
+
+  // progress: count answered questions
+  const answered = answers.filter(a=>a!==null).length;
+  progressText.textContent = `${answered} / 15`;
+  const pct = Math.round((answered/15)*100);
+  progBar.style.width = pct + '%';
+}
+
+function nextPage(){
+  // If on login page, validate
+  if(pageIndex===1){
+    const name = document.getElementById('name').value.trim();
+    if(!name){alert('Masukkan nama terlebih dahulu.');return;}
+    showStep(2);return;
+  }
+  if(pageIndex>=3 && pageIndex<=17){
+    const qi = pageIndex - 3; // 0-based
+    if(answers[qi]===null){alert('Pilih jawaban sebelum melanjutkan.');return;}
+    if(pageIndex===17){ // last question -> go to result
+      computeResult();
+      showStep(18);return;
+    }
+    showStep(pageIndex+1);
+    return;
+  }
+  if(pageIndex===2){ showStep(3); return; }
+}
+
+function prevPage(){
+  if(pageIndex===1) return;
+  if(pageIndex===2){ showStep(1); return; }
+  if(pageIndex>3 && pageIndex<=17){ showStep(pageIndex-1); return; }
+  if(pageIndex===3){ showStep(2); return; }
+  if(pageIndex===18){ showStep(17); }
+}
+
+// Compute result
+function computeResult(){
+  // categories: Visual (q1-5), Auditori (q6-10), Kinestetik (q11-15)
+  const sum = {Visual:0,Auditori:0,Kinestetik:0};
+  for(let i=0;i<15;i++){
+    const g = questions[i].group;
+    sum[g] += (answers[i]||0);
+  }
+
+  // Determine top
+  const entries = Object.entries(sum).sort((a,b)=>b[1]-a[1]);
+  const topScore = entries[0][1];
+  const top = entries.filter(e=>e[1]===topScore).map(e=>e[0]); // if tie, multimodal
+
+  const name = document.getElementById('name').value.trim();
+  document.getElementById('userSummary').textContent = `${name} · ${document.getElementById('kelas').value || '-'} · ${document.getElementById('sekolah').value || '-'}`;
+
+  const domEl = document.getElementById('dominantStyle');
+  const descEl = document.getElementById('styleDesc');
+  const tipsEl = document.getElementById('styleTips');
+  const motiv = document.getElementById('motivation');
+  const anim = document.getElementById('resultAnim');
+
+  let styleText='', desc='', tips=[], motivation='';
+  if(top.length===1){
+    styleText = top[0];
+    if(styleText==='Visual'){
+      desc = 'Kamu lebih mudah memahami informasi lewat tampilan visual: gambar, diagram, warna, dan video.';
+      tips = [
+        'Gunakan warna, gambar, diagram, dan catatan rapi saat belajar.',
+        'Tonton video pembelajaran atau buat mind map untuk meringkas materi.',
+        'Tempel catatan atau poster di tempat yang sering kamu lihat.'
+      ];
+      motivation = 'Setiap orang belajar dengan cara yang unik. Temukan ritmemu dan terus berkembang!';
+      anim.setAttribute('src','https://assets3.lottiefiles.com/packages/lf20_6ni2m6p6.json');
+    } else if(styleText==='Auditori'){
+      desc = 'Kamu cenderung cepat paham lewat pendengaran: penjelasan lisan, diskusi, atau musik.';
+      tips = [
+        'Dengarkan rekaman pelajaran atau diskusikan materi bersama teman.',
+        'Ulangi pelajaran dengan membacanya keras-keras atau rekam voice note.',
+        'Gunakan irama atau lagu untuk membantu mengingat informasi penting.'
+      ];
+      motivation = 'Tidak ada gaya belajar yang salah — yang penting kamu tahu cara terbaik untuk memahami dunia.';
+      anim.setAttribute('src','https://assets10.lottiefiles.com/packages/lf20_w51pcehl.json');
+    } else {
+      desc = 'Kamu belajar paling efektif lewat praktik, gerak, dan pengalaman langsung.';
+      tips = [
+        'Belajar sambil bergerak: tulis ulang, praktik langsung, atau buat model kecil.',
+        'Ikuti pelajaran yang ada praktiknya seperti eksperimen atau simulasi.',
+        'Gunakan alat peraga untuk memahami materi abstrak.'
+      ];
+      motivation = 'Kenali dirimu, pahami caramu belajar, dan langkah suksesmu akan menjadi lebih ringan.';
+      anim.setAttribute('src','https://assets5.lottiefiles.com/packages/lf20_hvxj3b7h.json');
+    }
+  } else {
+    styleText = top.join(' + ');
+    desc = 'Kamu termasuk multimodal: efektif menggunakan lebih dari satu cara belajar.';
+    tips = ['Gabungkan teknik visual, auditori, dan kinestetik sesuai kebutuhan materi.','Coba variasi: misal baca lalu jelaskan keras-keras sambil membuat ilustrasi.','Atur sesi belajar singkat bergantian antara membaca, mendengar, dan praktik.'];
+    motivation = 'Kelebihanmu: fleksibel! Gunakan kombinasi gaya yang paling cocok untuk tiap materi.';
+    anim.setAttribute('src','https://assets2.lottiefiles.com/packages/lf20_tkuc2l7n.json');
+  }
+
+  domEl.textContent = styleText;
+  descEl.textContent = desc;
+  tipsEl.innerHTML = '';
+  tips.forEach(t=>{ const li=document.createElement('li'); li.textContent=t; tipsEl.appendChild(li);});
+  motiv.textContent = motivation;
+}
+
+function restart(){
+  // reset answers
+  for(let i=0;i<15;i++)answers[i]=null;
+  // clear selected classes
+  document.querySelectorAll('.options').forEach(o=>Array.from(o.children).forEach(c=>c.classList.remove('active')));
+  // back to start
+  showStep(1);
+  updateHeader();
+}
+
+// Download result as PNG (simple) -> use html2canvas if available; otherwise create text file
+function downloadResult(){
+  // Try to create a printable summary image via canvas text
+  const name = document.getElementById('name').value.trim();
+  const dom = document.getElementById('dominantStyle').textContent;
+  const desc = document.getElementById('styleDesc').textContent;
+  const tips = Array.from(document.getElementById('styleTips').children).map(li=>li.textContent).join('\n- ');
+  const txt = `Hasil Tes Gaya Belajar\nNama: ${name}\nGaya: ${dom}\n\nDeskripsi:\n${desc}\n\nTips:\n- ${tips}`;
+  const blob = new Blob([txt],{type:'text/plain'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href=url; a.download = `${name || 'hasil'}_gaya_belajar.txt`; a.click();
+  URL.revokeObjectURL(url);
+}
+
+// init
+showStep(1);
+updateHeader();
+
+</script>
+</body>
+</html>
